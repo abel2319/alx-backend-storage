@@ -10,7 +10,7 @@ import uuid
 def count_calls(f: Callable) -> Callabe:
     """Decorator to count the number call of methods
     """
-    key = method.__qualname__
+    key = f.__qualname__
     @wrap(f)
     def wrapper(self, *args, **kwargs):
          """wrapper function
@@ -49,7 +49,7 @@ class Cache:
     def get_int(data: bytes) -> int:
         """convert byte to integer
         """
-        return int.from_bytes(data)²
+        return int.from_bytes(data)
 
     def get_str(self, data: bytes) -> str:
         """convert byte to string
