@@ -7,11 +7,11 @@ from typing import Union, Optional, Callable
 import uuid
 
 
-    
 def count_calls(method: Callable) -> Callable:
     """Decorator to count the number call of methods
     """
     key = method.__qualname__
+
     @wraps(method)
     def wrapper(self, *args, **kwargs):
         """wrapper function
@@ -19,6 +19,24 @@ def count_calls(method: Callable) -> Callable:
         self._redis.incr(key)
         return method(self, *args, **kwargs)
     return wrapper
+
+
+def call_history(method: Callable) -> Callable:
+    """decorator to store the history of inputs and outputs
+    """
+    inputs = f'{method.__qualname__}:inputs'
+    outputs = f'{method.__qualname__}:outputs'
+
+    @wraps(method)
+    def wrapper(self, *args, **kwargs):
+        """wrapper
+        """
+        self._redis.rpush(inputs, str(args))
+        retrieve_out = method(self, *args, **kwargs)
+        self._redis.rpush(outputs, retrieve_out)
+        return retrieve_out
+    return wrapper
+
 
 class Cache:
     """Class Cache for saving
@@ -29,6 +47,7 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
+    @call_history
     @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """Store data to redis data base
@@ -58,4 +77,3 @@ class Cache:
         """convert byte to string
         """
         return data.decode('utf-8')
-
