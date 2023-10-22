@@ -18,7 +18,6 @@ def replay(method: Callable):
     input_list = method.__self__._redis.lrange(inputs, 0, -1)
     output_list = method.__self__._redis.lrange(outputs, 0, -1)
 
-    queue = list(zip(i_list, o_list))
     print(f"{key} was called {number.decode('utf-8')} times:")
     for i, o in zip(input_list, output_list):
         print('{}(*{}) -> {}'.format(
