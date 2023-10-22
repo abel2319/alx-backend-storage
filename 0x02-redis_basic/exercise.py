@@ -8,16 +8,16 @@ import uuid
 
 
     
-def count_calls(f: Callable) -> Callable:
+def count_calls(method: Callable) -> Callable:
     """Decorator to count the number call of methods
     """
-    key = f.__qualname__
-    @wraps(f)
+    key = method.__qualname__
+    @wraps(method)
     def wrapper(self, *args, **kwargs):
         """wrapper function
         """
         self._redis.incr(key)
-        return f(self, *args, **kwargs)
+        return method(self, *args, **kwargs)
     return wrapper
 
 class Cache:
@@ -57,5 +57,5 @@ class Cache:
     def get_str(self, data: bytes) -> str:
         """convert byte to string
         """
-        return datia.decode('utf-8')
+        return data.decode('utf-8')
 
