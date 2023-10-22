@@ -13,11 +13,11 @@ def replay(method: Callable):
     key = method.__qualname__
     inputs = f'{key}:inputs'
     outputs = f'{key}:outputs'
-    
+
     number = method.__self__.get(key)
     input_list = method.__self__._redis.lrange(i, 0, -1)
     output_list = method.__self__._redis.lrange(o, 0, -1)
-    
+
     queue = list(zip(i_list, o_list))
     print(f"{key} was called {number.decode('utf-8')} times:")
     for i, o in zip(input_list, output_list):
